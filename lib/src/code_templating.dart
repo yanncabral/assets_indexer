@@ -6,23 +6,33 @@ const String GeneratorComment = '''
 
 const String _MustacheTemplate = '''
 {{{generatorComment}}}
+
+import 'package:flutter/painting.dart';
+
 {{#stringClasses}}
 class {{className}} {
   {{#keys}}
-  static String {{propertyName}} = "{{propertyValue}}";
+  static ImageProvider {{propertyName}} = const AssetImage(
+        "{{propertyValue}}",
+        package: "transfero_assets",
+      );
   {{/keys}}
 }
 {{/stringClasses}}
 ''';
 
 String getStringKeysCodeFromMap(Map<dynamic, dynamic> sourceMap) {
-  var template = Template(_MustacheTemplate, htmlEscapeValues: false);
-  var classInfos = [];
+  final template = Template(_MustacheTemplate, htmlEscapeValues: false);
+  final classInfos = [];
   for (var viewKey in sourceMap.keys) {
     var classMap = sourceMap[viewKey] as Map;
     var classProperties = classMap.keys
-        .map((propertyKey) => PropertyInfo(
-            propertyName: propertyKey, propertyValue: classMap[propertyKey]))
+        .map(
+          (propertyKey) => PropertyInfo(
+            propertyName: propertyKey,
+            propertyValue: classMap[propertyKey],
+          ),
+        )
         .toList();
     var info = StringsClassInfo(className: viewKey, keys: classProperties);
     classInfos.add(info);
